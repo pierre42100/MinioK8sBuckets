@@ -1,0 +1,84 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  # name must match the spec fields below, and be in the form: <plural>.<group>
+  name: miniobuckets.communiquons.org
+spec:
+  # group name to use for REST API: /apis/<group>/<version>
+  group: communiquons.org
+  # list of versions supported by this CustomResourceDefinition
+  versions:
+    - name: v1
+      # Each version can be enabled/disabled by Served flag.
+      served: true
+      # One and only one version must be marked as the storage version.
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              description: Information about the desired bucket
+              required:
+              - instance
+              - name
+              - secret
+              properties:
+                instance:
+                  description: The name of the MinioInstance resource
+                  example: minio
+                  type: string
+                name:
+                  description: The name of the bucket to create / update
+                  type: string
+                  example: mybucket
+                secret:
+                  description: The name of the secret that will receive an access key & token with write access on the bucket
+                  type: string
+                  example: secret-name
+                anonymous_read_access:
+                  description: Allow anonymous users to access the because, in read only mode. Set to true to host a website
+                  type: boolean
+                  default: false
+                versioning:
+                  description: Set to keep multiple versions of the same object under the same key
+                  type: boolean
+                  default: false
+                quota:
+                  type: integer
+                  description: Limits the amount of data in the bucket, in Megabytes. By default it is unlimited
+                  example: 100
+                retention:
+                  type: object
+                  description: Impose rules to prevent object deletion for a period of time. It requires versioning to be enabled/disabled
+                  required:
+                  - validity
+                  - mode
+                  properties:
+                    validity:
+                      type: integer
+                      description: The number of days the data shall be kept
+                      example: 180
+                    mode:
+                      type: string
+                      description: Retention type. In governance mode, some privileged user can bypass retention policy, while in governance policy, no one, including root user, can delete the data
+                      enum:
+                      - compliance
+                      - governance
+                
+
+
+  # either Namespaced or Cluster
+  scope: Namespaced
+  names:
+    # plural name to be used in the URL: /apis/<group>/<version>/<plural>
+    plural: miniobuckets
+    # singular name to be used as an alias on the CLI and for display
+    singular: miniobucket
+    # kind is normally the CamelCased singular type. Your resource manifests use this.
+    kind: MinioBucket
+    # shortNames allow shorter string to match your resource on the CLI
+    shortNames:
+    - mbs
+    - buckets
