@@ -316,7 +316,7 @@ impl MinioService {
         bucket_name: &str,
         access: bool,
     ) -> anyhow::Result<()> {
-        let target = self.absolute_bucket_name(bucket_name);
+        let target = format!("{}/*", self.absolute_bucket_name(bucket_name));
 
         let res = self
             .exec_mc_cmd::<BasicMinioResult>(&[
@@ -339,7 +339,7 @@ impl MinioService {
 
     /// Get current bucket anonymous access status
     pub async fn bucket_get_anonymous_access(&self, bucket_name: &str) -> anyhow::Result<bool> {
-        let bucket_name = self.absolute_bucket_name(bucket_name);
+        let bucket_name = format!("{}/*", self.absolute_bucket_name(bucket_name));
         Ok(self
             .exec_mc_cmd::<MinioAnonymousAccess>(&["anonymous", "get", bucket_name.as_str()])
             .await?
