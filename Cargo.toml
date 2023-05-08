@@ -1,0 +1,22 @@
+[package]
+name = "minio-operator"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+log = "0.4.17"
+env_logger = "0.10.0"
+anyhow = "1.0.71"
+serde = { version = "1.0.162", features = ["derive"] }
+serde_json = "1.0.96"
+schemars = "0.8.12"
+tokio = { version = "1.28.0", features = ["full"] }
+kube = { version = "0.82.2", features = ["runtime", "derive"] }
+k8s-openapi = { version = "0.18.0", features = ["v1_26"] } # TODO : switch to v1_27
+futures = "0.3.28"
+thiserror = "1.0.40"
+rand = "0.8.5"
+mktemp = "0.5.0"
+reqwest = "0.11.17"

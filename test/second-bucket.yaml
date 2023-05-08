@@ -1,0 +1,10 @@
+---
+apiVersion: "communiquons.org/v1"
+kind: MinioBucket
+metadata:
+  name: second-bucket
+spec:
+  instance: my-minio-instance
+  name: second-bucket
+  secret: second-bucket-secret
+  versioning: false

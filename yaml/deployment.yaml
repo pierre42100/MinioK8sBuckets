@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: true
+metadata:
+  name: minio-operator
+  namespace: default
+  labels:
+    app: minio-operator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: minio-operator
+  namespace: default
+rules:
+- apiGroups: ["communiquons.org"]
+  resources: ["minioinstances", "miniobuckets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "create"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: minio-operator
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: minio-operator
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: minio-operator
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio-operator
+  labels:
+    app: minio-operator
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: minio-operator
+  template:
+    metadata:
+      labels:
+        app: minio-operator
+    spec:
+      serviceAccountName: minio-operator
+      containers:
+        - name: minio-operator
+          image: pierre42100/minio_operator
+          resources:
+            limits:
+              memory: 300Mi
+              cpu: "0.1"
+            requests:
+              memory: 150Mi
+              cpu: "0.01"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL

@@ -2,6 +2,55 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   # name must match the spec fields below, and be in the form: <plural>.<group>
+  name: minioinstances.communiquons.org
+spec:
+  # group name to use for REST API: /apis/<group>/<version>
+  group: communiquons.org
+  # list of versions supported by this CustomResourceDefinition
+  versions:
+    - name: v1
+      # Each version can be enabled/disabled by Served flag.
+      served: true
+      # One and only one version must be marked as the storage version.
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              description: Information about how to reach the Minio bucket
+              properties:
+                endpoint:
+                  description: The URL where the Minio API can be reached
+                  example: https://minio.communiquons.org
+                  type: string
+                credentials:
+                  description: |
+                    The name of the secret containings privilegied / root credentials of Minio instance
+
+                    The secret must contains two fields :
+                    * An access key named `accessKey`
+                    * A secret key named `secretKey`
+                  type: string
+                  example: minio-root
+  # either Namespaced or Cluster
+  scope: Namespaced
+  names:
+    # plural name to be used in the URL: /apis/<group>/<version>/<plural>
+    plural: minioinstances
+    # singular name to be used as an alias on the CLI and for display
+    singular: minioinstance
+    # kind is normally the CamelCased singular type. Your resource manifests use this.
+    kind: MinioInstance
+    # shortNames allow shorter string to match your resource on the CLI
+    shortNames:
+    - mis
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  # name must match the spec fields below, and be in the form: <plural>.<group>
   name: miniobuckets.communiquons.org
 spec:
   # group name to use for REST API: /apis/<group>/<version>
@@ -34,7 +83,7 @@ spec:
                   type: string
                   example: mybucket
                 secret:
-                  description: The name of the secret that will receive an access key & token with write access on the bucket
+                  description: The name of the secret that will receive an access key & a secret key with write access on the bucket
                   type: string
                   example: secret-name
                 anonymous_read_access:
@@ -47,8 +96,12 @@ spec:
                   default: false
                 quota:
                   type: integer
-                  description: Limits the amount of data in the bucket, in Megabytes. By default it is unlimited
-                  example: 100
+                  description: Limits the amount of data in the bucket, in bytes. By default it is unlimited
+                  example: 1000000000
+                lock:
+                  description: Object locking prevent objects from being deleted. MUST be set to true when retention is defined. Cannot be changed.
+                  type: boolean
+                  default: false
                 retention:
                   type: object
                   description: Impose rules to prevent object deletion for a period of time. It requires versioning to be enabled/disabled
@@ -60,15 +113,12 @@ spec:
                       type: integer
                       description: The number of days the data shall be kept
                       example: 180
-                    mode:
+                    type:
                       type: string
                       description: Retention type. In governance mode, some privileged user can bypass retention policy, while in governance policy, no one, including root user, can delete the data
                       enum:
                       - compliance
                       - governance
-                
-
-
   # either Namespaced or Cluster
   scope: Namespaced
   names:
@@ -82,3 +132,4 @@ spec:
     shortNames:
     - mbs
     - buckets
+---

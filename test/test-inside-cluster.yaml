@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-root
+type: Opaque
+data:
+  accessKey: bWluaW9hZG1pbg==
+  secretKey: bWluaW9hZG1pbg==
+---
+apiVersion: "communiquons.org/v1"
+kind: MinioInstance
+metadata:
+  name: my-minio-instance
+spec:
+  endpoint: http://192.168.2.103:9000/
+  credentials: minio-root
+---
+apiVersion: "communiquons.org/v1"
+kind: MinioBucket
+metadata:
+  name: first-bucket
+spec:
+  instance: my-minio-instance
+  name: first-bucket
+  secret: first-bucket-secret

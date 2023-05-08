@@ -1,0 +1,16 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: cargo_check
+  image: rust
+  commands:
+  - wget -O /usr/bin/minio https://dl.min.io/server/minio/release/linux-amd64/minio
+  - wget -O /usr/bin/mc https://dl.min.io/client/mc/release/linux-amd64/mc
+  - chmod +x /usr/bin/minio /usr/bin/mc
+  - rustup component add clippy
+  - cargo clippy -- -D warnings
+  - cargo test
+
