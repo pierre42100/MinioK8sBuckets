@@ -14,3 +14,25 @@ steps:
   - cargo clippy -- -D warnings
   - cargo test
 
+- name: doc
+  image: python
+  environment:
+    AWS_ACCESS_KEY_ID:
+      from_secret: AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY:
+      from_secret: AWS_SECRET_ACCESS_KEY
+    AWS_DEFAULT_REGION: us-east-1
+  when:
+    branch:
+    - master
+  commands:
+  # Build website
+  - pip install mkdocs-material
+  - mkdocs build --site-dir public
+  # Install AWS
+  - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  - unzip awscliv2.zip
+  - ./aws/install
+  - aws configure set default.s3.signature_version s3v4
+  # Upload to bucket
+  - cd public && aws --endpoint-url https://s3.communiquons.org s3 sync . s3://miniok8sbucketsoperator-website
