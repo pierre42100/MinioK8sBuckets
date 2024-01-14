@@ -261,7 +261,7 @@ impl MinioService {
         }
 
         let res = self.exec_mc_cmd::<BasicMinioResult>(&args).await?;
-        if res.get(0).map(|r| r.success()) != Some(true) {
+        if res.first().map(|r| r.success()) != Some(true) {
             return Err(MinioError::MakeBucketFailed.into());
         }
 
@@ -292,7 +292,7 @@ impl MinioService {
             ])
             .await?;
 
-        if res.get(0).map(|r| r.success()) != Some(true) {
+        if res.first().map(|r| r.success()) != Some(true) {
             return Err(MinioError::SetQuotaFailed.into());
         }
         Ok(())
@@ -330,7 +330,7 @@ impl MinioService {
             ])
             .await?;
 
-        if res.get(0).map(|r| r.success()) != Some(true) {
+        if res.first().map(|r| r.success()) != Some(true) {
             return Err(MinioError::SetAnonymousAcccessFailed.into());
         }
 
@@ -367,7 +367,7 @@ impl MinioService {
                 .await?
         };
 
-        if res.get(0).map(|r| r.success()) != Some(true) {
+        if res.first().map(|r| r.success()) != Some(true) {
             return Err(MinioError::SetQuotaFailed.into());
         }
         Ok(())
@@ -415,7 +415,7 @@ impl MinioService {
             .await?
         };
 
-        if res.get(0).map(|r| r.success()) != Some(true) {
+        if res.first().map(|r| r.success()) != Some(true) {
             return Err(MinioError::SetRetentionFailed.into());
         }
 
@@ -472,7 +472,7 @@ impl MinioService {
             ])
             .await?;
 
-        if res.get(0).map(|r| r.success()) != Some(true) {
+        if res.first().map(|r| r.success()) != Some(true) {
             return Err(MinioError::ApplyPolicyFailed.into());
         }
 
@@ -512,7 +512,7 @@ impl MinioService {
             ])
             .await?;
 
-        if res.get(0).map(|r| r.success()) != Some(true) {
+        if res.first().map(|r| r.success()) != Some(true) {
             return Err(MinioError::CreateUserFailed.into());
         }
 
@@ -552,7 +552,7 @@ impl MinioService {
             ])
             .await?;
 
-        if res.get(0).map(|r| r.success()) != Some(true) {
+        if res.first().map(|r| r.success()) != Some(true) {
             return Err(MinioError::CreateUserFailed.into());
         }
 
@@ -579,7 +579,7 @@ impl MinioService {
             .userMappings;
 
         if let Some(mapping) = res {
-            if let Some(e) = mapping.get(0) {
+            if let Some(e) = mapping.first() {
                 return Ok(e.policies.clone());
             }
         }
