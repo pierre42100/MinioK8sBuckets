@@ -5,6 +5,7 @@ use serde::Deserialize;
 
 use crate::constants::{MC_EXE, SECRET_MINIO_BUCKET_ACCESS_LEN, SECRET_MINIO_BUCKET_SECRET_LEN};
 use crate::crd::{BucketRetention, MinioBucketSpec, RetentionType};
+use crate::temp;
 use crate::utils::rand_str;
 
 const MC_ALIAS_NAME: &str = "managedminioinst";
@@ -173,7 +174,7 @@ impl MinioService {
     {
         log::debug!("exec_mc_cmd with args {:?}", args);
 
-        let conf_dir = mktemp::Temp::new_dir()?;
+        let conf_dir = temp::create_temp_dir()?;
         let global_flags = ["--config-dir", conf_dir.to_str().unwrap(), "--json"];
 
         // First, set our alias to mc in a temporary directory
@@ -458,7 +459,7 @@ impl MinioService {
 
     /// Apply a bucket policy
     pub async fn policy_apply(&self, name: &str, content: &str) -> anyhow::Result<()> {
-        let tmp_file = mktemp::Temp::new_file()?;
+        let tmp_file = temp::create_temp_file()?;
         std::fs::write(&tmp_file, content)?;
 
         let res = self

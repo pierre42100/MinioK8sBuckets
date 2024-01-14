@@ -3,6 +3,7 @@
 //! Used for testing only
 
 use crate::minio::MinioService;
+use crate::temp;
 use crate::utils::rand_str;
 use rand::RngCore;
 use std::io::ErrorKind;
@@ -20,7 +21,7 @@ pub struct MinioTestServer {
 
 impl MinioTestServer {
     pub async fn start() -> anyhow::Result<Self> {
-        let storage_dir = mktemp::Temp::new_dir()?;
+        let storage_dir = temp::create_temp_dir()?;
 
         let root_user = rand_str(30);
         let root_password = rand_str(30);
