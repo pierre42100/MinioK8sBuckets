@@ -65,6 +65,8 @@ spec:
               cpu: "0.01"
           securityContext:
             allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
               - ALL
