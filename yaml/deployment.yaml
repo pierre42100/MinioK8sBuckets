@@ -13,12 +13,12 @@ metadata:
   name: minio-operator
   namespace: default
 rules:
-- apiGroups: ["communiquons.org"]
-  resources: ["minioinstances", "miniobuckets"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: [""]
-  resources: ["secrets"]
-  verbs: ["get", "create"]
+  - apiGroups: ["communiquons.org"]
+    resources: ["minioinstances", "miniobuckets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "create"]
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -26,9 +26,9 @@ metadata:
   name: minio-operator
   namespace: default
 subjects:
-- kind: ServiceAccount
-  name: minio-operator
-  namespace: default
+  - kind: ServiceAccount
+    name: minio-operator
+    namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -63,6 +63,10 @@ spec:
             requests:
               memory: 150Mi
               cpu: "0.01"
+          volumeMounts:
+            - mountPath: /tmp
+              readOnly: false
+              name: tempdir
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -70,4 +74,8 @@ spec:
             runAsGroup: 1000
             capabilities:
               drop:
-              - ALL
+                - ALL
+      volumes:
+        - name: tempdir
+          emptyDir:
+            sizeLimit: 500Mi
