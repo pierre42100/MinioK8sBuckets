@@ -10,6 +10,7 @@ use minio_operator::crd::{MinioBucket, MinioInstance};
 use minio_operator::minio::{MinioService, MinioUser};
 use minio_operator::secrets::{create_secret, read_secret_str};
 use std::collections::BTreeMap;
+use std::time::Duration;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -53,6 +54,17 @@ async fn apply_bucket(b: &MinioBucket, client: &Client) -> anyhow::Result<()> {
         access_key: read_secret_str(&instance_secret, SECRET_MINIO_INSTANCE_ACCESS_KEY)?,
         secret_key: read_secret_str(&instance_secret, SECRET_MINIO_INSTANCE_SECRET_KEY)?,
     };
+
+    // Check if Minio is responding
+    let mut ready_count = 0;
+    while !service.is_ready().await {
+        if ready_count > 5 {
+            panic!("Minio is unreachable!");
+        }
+        ready_count += 1;
+        tokio::time::sleep(Duration::from_millis(200)).await;
+        log::warn!("Minio is not responding yet, will try again to connect soon...");
+    }
 
     // Get user key & password
     let user_secret = match secrets.get_opt(&b.spec.secret).await? {
