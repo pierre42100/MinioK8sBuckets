@@ -58,11 +58,11 @@ async fn apply_bucket(b: &MinioBucket, client: &Client) -> anyhow::Result<()> {
     // Check if Minio is responding
     let mut ready_count = 0;
     while !service.is_ready().await {
-        if ready_count > 5 {
+        if ready_count > 10 {
             panic!("Minio is unreachable!");
         }
         ready_count += 1;
-        tokio::time::sleep(Duration::from_millis(200)).await;
+        tokio::time::sleep(Duration::from_millis(500)).await;
         log::warn!("Minio is not responding yet, will try again to connect soon...");
     }
 
