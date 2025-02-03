@@ -25,7 +25,7 @@ impl MinioTestServer {
 
         let root_user = rand_str(30);
         let root_password = rand_str(30);
-        let api_port = (2000 + rand::thread_rng().next_u64() % 5000) as u16;
+        let api_port = (2000 + rand::rng().next_u64() % 5000) as u16;
         log::info!(
             "Spwan a new Minio server on port {} with root credentials {}:{}",
             api_port,
