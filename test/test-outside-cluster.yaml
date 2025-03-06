@@ -12,7 +12,7 @@ kind: MinioInstance
 metadata:
   name: my-minio-instance
 spec:
-  endpoint: http://localhost:9000/
+  endpoint: http://localhost:9000
   credentials: minio-root
 ---
 apiVersion: "communiquons.org/v1"

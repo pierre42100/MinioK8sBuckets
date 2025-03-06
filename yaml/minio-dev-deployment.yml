@@ -26,7 +26,7 @@ spec:
             - containerPort: 9000
               protocol: TCP
               name: api
-            - containerPort: 9001
+            - containerPort: 9090
               protocol: TCP
               name: console
           args:
@@ -84,6 +84,6 @@ spec:
       port: 9000
       targetPort: api
     - name: console
-      port: 9001
+      port: 9090
       targetPort: console
   externalTrafficPolicy: Local
