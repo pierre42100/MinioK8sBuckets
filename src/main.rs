@@ -77,7 +77,7 @@ async fn apply_bucket(b: &MinioBucket, client: &Client) -> anyhow::Result<()> {
             );
 
             // The secret needs to be created
-            let new_user = MinioUser::gen_random();
+            let new_user = MinioUser::gen_random(&b.spec.name);
             create_secret(
                 &secrets,
                 &b.spec.secret,

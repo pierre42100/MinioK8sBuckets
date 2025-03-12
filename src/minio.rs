@@ -44,9 +44,9 @@ pub struct MinioUser {
 }
 
 impl MinioUser {
-    pub fn gen_random() -> Self {
+    pub fn gen_random(prefix: &str) -> Self {
         Self {
-            username: rand_str(SECRET_MINIO_BUCKET_ACCESS_LEN),
+            username: format!("{prefix}_{}", rand_str(SECRET_MINIO_BUCKET_ACCESS_LEN)),
             password: rand_str(SECRET_MINIO_BUCKET_SECRET_LEN),
         }
     }
@@ -1099,7 +1099,7 @@ mod test {
         let srv = MinioTestServer::start().await.unwrap();
         let service = srv.as_service();
 
-        let user = MinioUser::gen_random();
+        let user = MinioUser::gen_random("policy_user");
 
         assert!(!service.user_list().await.unwrap().contains(&user.username));
         service.user_apply(&user).await.unwrap();
@@ -1113,7 +1113,7 @@ mod test {
         let srv = MinioTestServer::start().await.unwrap();
         let service = srv.as_service();
 
-        let user = MinioUser::gen_random();
+        let user = MinioUser::gen_random("attach_policy_user");
 
         service.user_apply(&user).await.unwrap();
         service
