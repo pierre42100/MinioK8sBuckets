@@ -5,23 +5,23 @@ name: default
 
 steps:
 - name: fetch_dependencies
-    image: rust
-    volumes:
-      - name: rust_registry
-        path: /usr/local/cargo/registry
-    commands:
-      - cargo fetch
+  image: rust
+  volumes:
+    - name: rust_registry
+      path: /usr/local/cargo/registry
+  commands:
+    - cargo fetch
 
 - name: code_quality
-    image: rust
-    volumes:
-      - name: rust_registry
-        path: /usr/local/cargo/registry
-    depends_on:
-      - fetch_dependencies
-    commands:
-      - rustup component add clippy
-      - cargo clippy -- -D warnings
+  image: rust
+  volumes:
+    - name: rust_registry
+      path: /usr/local/cargo/registry
+  depends_on:
+    - fetch_dependencies
+  commands:
+    - rustup component add clippy
+    - cargo clippy -- -D warnings
 
 - name: test
   image: rust
