@@ -164,7 +164,7 @@ impl MinioService {
 
     /// Get bucket name prefixed by mc alias name
     fn absolute_bucket_name(&self, name: &str) -> String {
-        format!("{}/{name}", MC_ALIAS_NAME)
+        format!("{MC_ALIAS_NAME}/{name}")
     }
 
     /// Execute a minio mc command
@@ -172,7 +172,7 @@ impl MinioService {
     where
         A: DeserializeOwned,
     {
-        log::debug!("exec_mc_cmd with args {:?}", args);
+        log::debug!("exec_mc_cmd with args {args:?}");
 
         let conf_dir = temp::create_temp_dir()?;
         let global_flags = ["--config-dir", conf_dir.to_str().unwrap(), "--json"];
@@ -354,7 +354,7 @@ impl MinioService {
         let bucket_name = self.absolute_bucket_name(bucket);
 
         let res = if let Some(quota) = &quota {
-            let quota = format!("{}B", quota);
+            let quota = format!("{quota}B");
             self.exec_mc_cmd::<BasicMinioResult>(&[
                 "quota",
                 "set",
@@ -447,7 +447,7 @@ impl MinioService {
                         "governance" => RetentionType::Governance,
                         "compliance" => RetentionType::Compliance,
                         o => {
-                            log::error!("Unknown retention type: {}", o);
+                            log::error!("Unknown retention type: {o}");
                             return Ok(None);
                         }
                     },

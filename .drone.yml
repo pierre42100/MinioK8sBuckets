@@ -4,17 +4,37 @@ type: docker
 name: default
 
 steps:
-- name: cargo_check
+- name: fetch_dependencies
+    image: rust
+    volumes:
+      - name: rust_registry
+        path: /usr/local/cargo/registry
+    commands:
+      - cargo fetch
+
+- name: code_quality
+    image: rust
+    volumes:
+      - name: rust_registry
+        path: /usr/local/cargo/registry
+    depends_on:
+      - fetch_dependencies
+    commands:
+      - rustup component add clippy
+      - cargo clippy -- -D warnings
+
+- name: test
   image: rust
+  volumes:
+      - name: rust_registry
+        path: /usr/local/cargo/registry
   commands:
   - wget -O /usr/bin/minio https://dl.min.io/server/minio/release/linux-amd64/minio
   - wget -O /usr/bin/mc https://dl.min.io/client/mc/release/linux-amd64/mc
   - chmod +x /usr/bin/minio /usr/bin/mc
-  - rustup component add clippy
-  - cargo clippy -- -D warnings
   - cargo test
 
-- name: doc
+- name: build_doc
   image: python
   environment:
     AWS_ACCESS_KEY_ID:
@@ -39,3 +59,7 @@ steps:
   - aws configure set default.s3.signature_version s3v4
   # Upload to bucket
   - cd public && aws --endpoint-url https://s3.communiquons.org s3 sync . s3://miniok8sbucketsoperator-website
+
+volumes:
+  - name: rust_registry
+    temp: {}
