@@ -25,6 +25,8 @@ steps:
 
 - name: test
   image: rust
+  depends_on:
+      - code_quality
   volumes:
       - name: rust_registry
         path: /usr/local/cargo/registry
