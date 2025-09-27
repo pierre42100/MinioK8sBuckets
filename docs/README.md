@@ -62,7 +62,7 @@ spec:
 
 
 ## Create a bucket
-You are not ready to create your first bucket!
+You are now ready to create your first bucket!
 
 Here is a basic bucket example:
 
