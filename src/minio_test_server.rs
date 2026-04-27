@@ -5,7 +5,7 @@
 use crate::minio::MinioService;
 use crate::temp;
 use crate::utils::rand_str;
-use rand::RngCore;
+use rand::Rng;
 use std::io::ErrorKind;
 use std::process::{Child, Command};
 use std::time::Duration;
